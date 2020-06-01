@@ -1,12 +1,3 @@
-import { camelize } from 'humps';
-import baseMkdirp from 'mkdirp';
-import denodeify from 'denodeify';
-import path from 'path';
-import fs from 'fs';
-
-const mkdirp = denodeify(baseMkdirp);
-
-const template = `
 module.exports = async (client) => {
   // DatoCMS migration script
 
@@ -47,21 +38,4 @@ module.exports = async (client) => {
     itemType: articleModel.id,
     title: 'My first article!',
   });
-}
-`.trim();
-
-export default async function toggleMaintenanceMode({
-  name,
-  relativeMigrationsDir,
-}) {
-  const migrationsDir = path.resolve(relativeMigrationsDir);
-  await mkdirp(migrationsDir);
-
-  const timestamp = Math.floor(Date.now() / 1000);
-  const migrationFile = `${timestamp}_${camelize(name)}.js`;
-  const migrationAbsolutePath = path.join(migrationsDir, migrationFile);
-
-  fs.writeFileSync(migrationAbsolutePath, template, 'utf8');
-
-  process.stdout.write(`Created ${path.join(relativeMigrationsDir, migrationFile)}\n`);
 }
